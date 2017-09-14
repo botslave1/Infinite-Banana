@@ -68,6 +68,7 @@ public class Banker
 					{
 						if (Player.getRSPlayer().getAnimation() == -1)
 						{
+							SUPER.print("Can't see deposit box. Attempting to walk closer");
 							WebWalking.walkTo(depositBox[0]);
 						}
 					}

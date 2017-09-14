@@ -137,7 +137,6 @@ public class Walker
 					RSTile innerTarget = SUPER.SHOP_MAIN_AREA_TILES[General.random(7, SUPER.SHOP_MAIN_AREA_TILES.length - 4)];
 					
 					Walking.clickTileMM(innerTarget, 1);
-					SUPER.print("Walking to adjust");
 					
 					Timing.waitCondition(new Condition ()
 					{
