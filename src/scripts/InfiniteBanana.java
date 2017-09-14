@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.tribot.api.Timing;
-import org.tribot.api.input.Mouse;
 import org.tribot.api.util.Screenshots;
 import org.tribot.api2007.Login;
 import org.tribot.api2007.Player;

@@ -193,11 +193,6 @@ public class Walker
 					}
 				}, General.random(5000, 6000)))
 				{
-					if (SUPER.isStoreroomDoorOpen())
-					{
-						return;
-					}
-					
 					ANTIBAN.updateActivityStats("ExitStoreRoom");
 					ANTIBAN.waitForReactionTime("ExitStoreRoom");
 				}

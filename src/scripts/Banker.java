@@ -8,6 +8,7 @@ import org.tribot.api2007.Banking;
 import org.tribot.api2007.Camera;
 import org.tribot.api2007.Inventory;
 import org.tribot.api2007.Objects;
+import org.tribot.api2007.Player;
 import org.tribot.api2007.WebWalking;
 import org.tribot.api2007.types.RSObject;
 
@@ -65,7 +66,10 @@ public class Banker
 					}
 					else if (m_attempts > 3)
 					{
-						WebWalking.walkTo(depositBox[0]);
+						if (Player.getRSPlayer().getAnimation() == -1)
+						{
+							WebWalking.walkTo(depositBox[0]);
+						}
 					}
 					
 					General.sleep(50);
