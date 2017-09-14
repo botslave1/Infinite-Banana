@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.UIManager;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.JSlider;
 
 public class GUI extends javax.swing.JFrame 
 {
@@ -57,7 +58,7 @@ public class GUI extends javax.swing.JFrame
         setMinimumSize(new java.awt.Dimension(711, 405));
         setResizable(false);
         setType(java.awt.Window.Type.UTILITY);
-        getContentPane().setLayout(new java.awt.GridLayout(11, 0));
+        getContentPane().setLayout(new java.awt.GridLayout(13, 0));
 
         m_title.setFont(new java.awt.Font("Futura Md BT", 0, 22)); // NOI18N
         m_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -85,6 +86,23 @@ public class GUI extends javax.swing.JFrame
         m_tickerLabel.setHorizontalAlignment(SwingConstants.CENTER);
         m_tickerLabel.setFont(new Font("Futura Md BT", Font.PLAIN, 14));
         getContentPane().add(m_tickerLabel);
+        
+        m_mouseSpeedLabel = new JLabel();
+        m_mouseSpeedLabel.setText("MOUSE SPEED");
+        m_mouseSpeedLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        m_mouseSpeedLabel.setFont(new Font("Futura Md BT", Font.PLAIN, 14));
+        getContentPane().add(m_mouseSpeedLabel);
+        
+        m_mouseSpeedSlider = new JSlider();
+        m_mouseSpeedSlider.setMinorTickSpacing(5);
+        m_mouseSpeedSlider.setPaintTicks(true);
+        m_mouseSpeedSlider.setPaintLabels(true);
+        m_mouseSpeedSlider.setMinimum(80);
+        m_mouseSpeedSlider.setValue(100);
+        m_mouseSpeedSlider.setMaximum(160);
+        m_mouseSpeedSlider.setMajorTickSpacing(20);
+        m_mouseSpeedSlider.setFont(new Font("Futura Md BT", Font.PLAIN, 11));
+        getContentPane().add(m_mouseSpeedSlider);
 
         m_abLogLevelLabel.setFont(new java.awt.Font("Futura Md BT", 0, 14)); // NOI18N
         m_abLogLevelLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -173,6 +191,7 @@ public class GUI extends javax.swing.JFrame
     		m_tickerLabel.setText("INFINITE BANANA WILL START IN " + (long)((5999 - countDown) / 1000) + " SECONDS");
     		
 			m_guiDefaultSelectedTime = System.currentTimeMillis();
+			m_mouseSpeedSlider.setValue(General.random(90, 125));
         	m_abLogLevelSlider.setValue(0);
         	m_abLevelSlider.setValue(General.random(5, 15));
         	m_runSlider.setValue(General.random(50, 85));
@@ -203,6 +222,7 @@ public class GUI extends javax.swing.JFrame
         SUPER.ANTIBAN_LEVEL = (double)m_abLevelSlider.getValue() / 100;
         SUPER.RUN_THRESHHOLD = m_runSlider.getValue();
         SUPER.SAVE_PROGS = m_saveProgsCheckBox.isSelected();
+        SUPER.MOUSE_SPEED = m_mouseSpeedSlider.getValue();
         
         saveSettings();
         
@@ -214,6 +234,7 @@ public class GUI extends javax.swing.JFrame
 	    try 
 	    {
 	    	m_properties.clear();
+	    	m_properties.put("mss", String.valueOf(m_mouseSpeedSlider.getValue()));   
 	    	m_properties.put("urc", String.valueOf(m_useRecommendedCheckBox.isSelected()));   
 	    	m_properties.put("ablls", String.valueOf(m_abLogLevelSlider.getValue()));   
 	    	m_properties.put("abls", String.valueOf(m_abLevelSlider.getValue()));   
@@ -241,6 +262,8 @@ public class GUI extends javax.swing.JFrame
             }      
             
             m_properties.load(new FileInputStream(m_fullPath));
+            
+            m_mouseSpeedSlider.setValue(Integer.parseInt(m_properties.getProperty("mss")));
             
             m_useRecommendedCheckBox.setSelected(Boolean.parseBoolean(m_properties.getProperty("urc")));
             
@@ -294,4 +317,6 @@ public class GUI extends javax.swing.JFrame
     public static File m_fullPath;
     private JCheckBox m_useRecommendedCheckBox;
     private JLabel m_tickerLabel;
+    private JLabel m_mouseSpeedLabel;
+    private JSlider m_mouseSpeedSlider;
 }

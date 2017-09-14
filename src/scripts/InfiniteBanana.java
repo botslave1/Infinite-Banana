@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.tribot.api.Timing;
+import org.tribot.api.input.Mouse;
 import org.tribot.api.util.Screenshots;
 import org.tribot.api2007.Login;
 import org.tribot.api2007.Player;
@@ -37,27 +38,30 @@ public class InfiniteBanana extends Script implements Painting, Ending, MousePai
 
 		while (SUPER.RUNNING)
 		{
-			switch (m_state.getState())
+			if (Login.getLoginState() == Login.STATE.INGAME)
 			{
-				case COLLECTING_BANANAS :
-					m_collector.run();
-					break;
-				case INTERACTING_WITH_DEPOSIT_BOX :
-					m_banker.run();
-					break;
-				case TRAVELLING_TO_DEPOSIT_BOX :
-					m_walker.run(SUPER.DESTINATION.DEPOSIT_BOX);
-					break;
-				case TRAVELLING_TO_SHOP :
-					m_walker.run(SUPER.DESTINATION.SHOP);
-					break;
-				case INITIALISING :
-					break;
-			}
+				switch (m_state.getState())
+				{
+					case COLLECTING_BANANAS :
+						m_collector.run();
+						break;
+					case INTERACTING_WITH_DEPOSIT_BOX :
+						m_banker.run();
+						break;
+					case TRAVELLING_TO_DEPOSIT_BOX :
+						m_walker.run(SUPER.DESTINATION.DEPOSIT_BOX);
+						break;
+					case TRAVELLING_TO_SHOP :
+						m_walker.run(SUPER.DESTINATION.SHOP);
+						break;
+					case INITIALISING :
+						break;
+				}
 
-			if ((System.currentTimeMillis() - SUPER.TIME_LAST_PRICE_CHECK) > SUPER.MILIS_IN_HOUR)
-			{
-				SUPER.priceCheckBanana();
+				if ((System.currentTimeMillis() - SUPER.TIME_LAST_PRICE_CHECK) > SUPER.MILIS_IN_HOUR)
+				{
+					SUPER.priceCheckBanana();
+				}
 			}
 			
 			sleep(SUPER.SLEEP_TIME);

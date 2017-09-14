@@ -3,6 +3,7 @@ package scripts;
 import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
+import org.tribot.api.input.Mouse;
 import org.tribot.api.types.generic.Condition;
 import org.tribot.api2007.Camera;
 import org.tribot.api2007.Interfaces;
@@ -32,6 +33,7 @@ public final class SUPER
 	public static boolean SAVE_PROGS;
 	public static String ACC_NAME;
 	public static long TIME_LAST_PRICE_CHECK;
+	public static int MOUSE_SPEED;
 	
 	// LOCATIONS
 	public static final RSTile SHOP_COORDS = new RSTile(3018, 3207);
@@ -146,6 +148,8 @@ public final class SUPER
 		MAIN_SCRIPT = main;
 		
 		runGUI();
+		
+		Mouse.setSpeed(MOUSE_SPEED);
 		
 		STATE = ACTIVITY_STATE.INITIALISING;
 		RUNNING = true;
