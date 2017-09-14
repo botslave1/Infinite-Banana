@@ -40,6 +40,7 @@ public final class SUPER
 	public static final RSTile BANANA_BOX_COORDS = new RSTile(3009, 3207);
 	public static final RSTile SHOP_DOOR_OPEN = new RSTile(3017, 3206);
 	public static final RSTile SHOP_DOOR_CLOSED = new RSTile(3016, 3206);
+	public static final RSTile LUMB_GEN_STORE = new RSTile(3212, 3247);
 	
 	// STOREROOM BOUNDS
 	private static final int STOREROOM_TOP = 3209, STOREROOM_BOTTOM = 3204, STOREROOM_LEFT = 3009, STOREROOM_RIGHT = 3011;
@@ -173,7 +174,9 @@ public final class SUPER
 		
 		while (!GUI_FINISHED)
 		{
-			General.sleep(300);
+			gui.autoCloseEventCheck();
+			
+			General.sleep(40);
 		}
 		
 		gui.setVisible(false);

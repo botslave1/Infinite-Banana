@@ -6,16 +6,36 @@ import java.io.FileOutputStream;
 import java.util.Hashtable;
 import java.util.Properties;
 import javax.swing.JLabel;
+
+import org.tribot.api.General;
 import org.tribot.util.Util;
+import javax.swing.JCheckBox;
+import java.awt.Font;
+import javax.swing.SwingConstants;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.UIManager;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class GUI extends javax.swing.JFrame 
 {
 	private static final long serialVersionUID = 1L;
+	private long m_guiDefaultSelectedTime = -1;
 	
 	public GUI() 
     {
+		addWindowListener(new WindowAdapter()
+		{
+			@Override
+			public void windowClosed(WindowEvent arg0)
+			{
+				SUPER.RUNNING = false;
+			}
+		});
         initComponents();
         loadSettings();
+        setDefaultValues();
     }
 
     private void initComponents()
@@ -37,12 +57,34 @@ public class GUI extends javax.swing.JFrame
         setMinimumSize(new java.awt.Dimension(711, 405));
         setResizable(false);
         setType(java.awt.Window.Type.UTILITY);
-        getContentPane().setLayout(new java.awt.GridLayout(9, 0));
+        getContentPane().setLayout(new java.awt.GridLayout(11, 0));
 
         m_title.setFont(new java.awt.Font("Futura Md BT", 0, 22)); // NOI18N
         m_title.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         m_title.setText("INFINITE BANANA by BOTSLAVE");
         getContentPane().add(m_title);
+        
+        m_useRecommendedCheckBox = new JCheckBox();
+        m_useRecommendedCheckBox.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) 
+        	{
+        		defaultPressed();
+        	}
+        });
+        m_useRecommendedCheckBox.setText("USE RECOMMENDED SETTINGS");
+        m_useRecommendedCheckBox.setSelected(true);
+        m_useRecommendedCheckBox.setHorizontalTextPosition(SwingConstants.LEFT);
+        m_useRecommendedCheckBox.setHorizontalAlignment(SwingConstants.CENTER);
+        m_useRecommendedCheckBox.setFont(new Font("Futura Md BT", Font.PLAIN, 14));
+        m_useRecommendedCheckBox.setFocusable(false);
+        getContentPane().add(m_useRecommendedCheckBox);
+        
+        m_tickerLabel = new JLabel();
+        m_tickerLabel.setForeground(UIManager.getColor("TextArea.selectionBackground"));
+        m_tickerLabel.setText("INFINITE BANANA WILL START WHEN YOU CLICK RUN");
+        m_tickerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        m_tickerLabel.setFont(new Font("Futura Md BT", Font.PLAIN, 14));
+        getContentPane().add(m_tickerLabel);
 
         m_abLogLevelLabel.setFont(new java.awt.Font("Futura Md BT", 0, 14)); // NOI18N
         m_abLogLevelLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -75,7 +117,6 @@ public class GUI extends javax.swing.JFrame
         m_abLevelSlider.setMinorTickSpacing(5);
         m_abLevelSlider.setPaintLabels(true);
         m_abLevelSlider.setPaintTicks(true);
-        m_abLevelSlider.setSnapToTicks(true);
         m_abLevelSlider.setValue(10);
         Hashtable<Integer, JLabel> labelsABLL = new Hashtable<Integer, JLabel>();
         labelsABLL.put(0, new JLabel("None"));
@@ -115,7 +156,7 @@ public class GUI extends javax.swing.JFrame
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                m_runButtonActionPerformed(evt);
+                startPressed(evt);
             }
         });
         getContentPane().add(m_runButton);
@@ -123,13 +164,40 @@ public class GUI extends javax.swing.JFrame
         pack();
     }
 
+	private void setDefaultValues()
+	{
+		if (m_useRecommendedCheckBox.isSelected())
+        {
+			m_guiDefaultSelectedTime = System.currentTimeMillis();
+    		long countDown = System.currentTimeMillis() - m_guiDefaultSelectedTime;
+    		m_tickerLabel.setText("INFINITE BANANA WILL START IN " + (long)((5999 - countDown) / 1000) + " SECONDS");
+    		
+			m_guiDefaultSelectedTime = System.currentTimeMillis();
+        	m_abLogLevelSlider.setValue(0);
+        	m_abLevelSlider.setValue(General.random(5, 15));
+        	m_runSlider.setValue(General.random(50, 85));
+        	m_saveProgsCheckBox.setSelected(true);
+        }
+	}
+	
 	private void setUpPaths()
 	{
 		m_folder = new File(Util.getWorkingDirectory() + "\\InfiniteBananaSettings\\");
     	m_fullPath = new File(m_folder, SUPER.SCRIPT_NAME + "_settings.ini");
-	}                  
+	}      
+	
+	private void defaultPressed ()
+	{
+		if (!m_useRecommendedCheckBox.isSelected())
+		{
+    		m_tickerLabel.setText("INFINITE BANANA WILL START WHEN YOU CLICK RUN");
+			return;
+		}
+		
+        setDefaultValues();
+	}
 
-    private void m_runButtonActionPerformed(java.awt.event.ActionEvent evt)
+    private void startPressed(java.awt.event.ActionEvent evt)
     {                                            
         SUPER.ANTIBAN_VERBOSITY = SUPER.LOG_VERBOSITY.values()[m_abLogLevelSlider.getValue()];
         SUPER.ANTIBAN_LEVEL = (double)m_abLevelSlider.getValue() / 100;
@@ -146,6 +214,7 @@ public class GUI extends javax.swing.JFrame
 	    try 
 	    {
 	    	m_properties.clear();
+	    	m_properties.put("urc", String.valueOf(m_useRecommendedCheckBox.isSelected()));   
 	    	m_properties.put("ablls", String.valueOf(m_abLogLevelSlider.getValue()));   
 	    	m_properties.put("abls", String.valueOf(m_abLevelSlider.getValue()));   
 	    	m_properties.put("rs", String.valueOf(m_runSlider.getValue()));   
@@ -163,15 +232,17 @@ public class GUI extends javax.swing.JFrame
     }
     
     public void loadSettings()
-    {   //we will call this externally    
+    {   
         try
         {      
             if (!m_fullPath.exists())
             {             
-            	m_fullPath.createNewFile();      //or make a new one        
+            	return;
             }      
             
-            m_properties.load(new FileInputStream(m_fullPath));    
+            m_properties.load(new FileInputStream(m_fullPath));
+            
+            m_useRecommendedCheckBox.setSelected(Boolean.parseBoolean(m_properties.getProperty("urc")));
             
             m_abLogLevelSlider.setValue(Integer.parseInt(m_properties.getProperty("ablls")));
             
@@ -186,6 +257,23 @@ public class GUI extends javax.swing.JFrame
             System.out.print("Unable to load settings");      
             e.printStackTrace();   
         }
+    }
+    
+    public void autoCloseEventCheck()
+    {
+    	if (m_useRecommendedCheckBox.isSelected())
+    	{
+    		long countDown = System.currentTimeMillis() - m_guiDefaultSelectedTime;
+    		
+    		m_tickerLabel.setText("INFINITE BANANA WILL START IN " + (long)((5999 - countDown) / 1000) + " SECONDS");
+    		
+    		if (countDown > 5000)
+    		m_runButton.doClick();
+    	}
+    	else
+    	{
+    		m_tickerLabel.setText("INFINITE BANANA WILL START WHEN YOU CLICK RUN");
+    	}
     }
 
     // Variables declaration - do not modify                     
@@ -204,4 +292,6 @@ public class GUI extends javax.swing.JFrame
     public static Properties m_properties = new Properties();
     public static File m_folder;
     public static File m_fullPath;
+    private JCheckBox m_useRecommendedCheckBox;
+    private JLabel m_tickerLabel;
 }
