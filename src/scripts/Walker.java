@@ -1,5 +1,6 @@
 package scripts;
 
+import org.tribot.api.DynamicClicking;
 import org.tribot.api.General;
 import org.tribot.api.Timing;
 import org.tribot.api.types.generic.Condition;
@@ -157,7 +158,8 @@ public class Walker
 		}
 	}
 
-	private void checkTimeOut(long walkingStart, long walkingTimeout) {
+	private void checkTimeOut(long walkingStart, long walkingTimeout) 
+	{
 		if ((System.currentTimeMillis() - walkingStart > walkingTimeout))
 		{
 			SUPER.print("We seem to have gotten lost... Shutting down!");
@@ -171,7 +173,7 @@ public class Walker
 		
 		if (storeroomDoor.length > 0)
 		{
-			if (storeroomDoor[0].click("Open Door"))
+			if (DynamicClicking.clickRSObject(storeroomDoor[0], "Open Door"))
 			{
 				ANTIBAN.startTimer("ExitStoreRoom");
 				ANTIBAN.updateTracker("ExitStoreRoom");
@@ -182,7 +184,7 @@ public class Walker
 					@Override
 					public boolean active()
 					{
-						if (!SUPER.isInStoreroom(Player.getPosition()) || SUPER.isStoreroomDoorOpen())
+						if (SUPER.isStoreroomDoorOpen())
 						{
 							return true;
 						}
@@ -192,6 +194,7 @@ public class Walker
 					}
 				}, General.random(5000, 6000)))
 				{
+					
 					ANTIBAN.updateActivityStats("ExitStoreRoom");
 					ANTIBAN.waitForReactionTime("ExitStoreRoom");
 				}

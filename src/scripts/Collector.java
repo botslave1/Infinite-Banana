@@ -218,7 +218,7 @@ public class Collector
 					@Override
 					public boolean active()
 					{
-						if (SUPER.isInStoreroom(Player.getPosition()) || !canEnterStoreroom() || SUPER.isStoreroomDoorOpen())
+						if (!canEnterStoreroom() || SUPER.isStoreroomDoorOpen())
 						{
 							return true;
 						}
@@ -232,27 +232,6 @@ public class Collector
 				}
 				else
 				{
-					canEnterStoreroom();
-					
-					if (SUPER.isStoreroomDoorOpen())
-					{
-						Timing.waitCondition(new Condition ()
-						{
-							@Override
-							public boolean active()
-							{
-								if (!SUPER.isStoreroomDoorOpen())
-								{
-									return true;
-								}
-								
-								General.sleep(SUPER.SLEEP_TIME);
-								return false;
-							}
-						}, General.random(2000, 3000));
-						return;
-					}
-					
 					ANTIBAN.updateActivityStats("EnterStoreRoom");
 					ANTIBAN.waitForReactionTime("EnterStoreRoom");
 					m_doorOpenAttempts = 0;	

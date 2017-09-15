@@ -36,7 +36,7 @@ public class State
 			// If our inventory is full
 			if (Inventory.isFull())
 			{
-				return returnAndUpdateState(SUPER.ACTIVITY_STATE.TRAVELLING_TO_DEPOSIT_BOX);
+				return returnAndUpdateState(SUPER.ACTIVITY_STATE.TRAVELLING_TO_DEPOSIT_BOX);			
 			}
 			
 			// If we are near enough to the shop to start collecting
