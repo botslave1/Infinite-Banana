@@ -178,6 +178,28 @@ public class Collector
 	
 	private void enterStoreRoom()
 	{
+		if (Player.getPosition().getPlane() != 0)
+		{
+			RSObject ladders [] = Objects.findNearest(20, "Ladder");
+			
+			if (ladders.length > 0)
+			{
+				DynamicClicking.clickRSObject(ladders[0], "Climb-down Ladder");
+				
+				Timing.waitCondition(new Condition ()
+				{
+					@Override
+					public boolean active()
+					{
+						General.sleep(SUPER.SLEEP_TIME);
+						return Player.getPosition().getPlane() == 0;
+					}
+				}, General.random(3000, 5000));
+			}
+			
+			return;
+		}
+		
 		if (SUPER.isShopDoorClosed()) SUPER.handleClosedShopDoor(Player.getPosition());
 		
 		RSObject storeroomDoor [] = Objects.findNearest(20, SUPER.OBJECT_ID.STORE_ROOM_DOOR_CLOSED.getID());
